@@ -3,9 +3,9 @@ import { ProductServices } from "./product.service";
 
 const createProduct = async (req: Request, res: Response) => {
     try {
-        const product = req.body
+        const { product: productData } = req.body; //ekhane name allias use korsi
         //will call service function to send this data
-        const result = await ProductServices.createProductIntoDB(product)
+        const result = await ProductServices.createProductIntoDB(productData)
 
 
         // Send Response

@@ -1,5 +1,5 @@
 import { Schema, model, connect } from 'mongoose';
-import { Inventory, Product, Product, Product, Variant } from './product/product.interface';
+import { Inventory, Product, Variant } from './product/product.interface';
 
 // Creating schema
 const VariantSchema = new Schema<Variant>(
@@ -15,7 +15,7 @@ const inventorySchema = new Schema<Inventory>({
     quantity: { type: Number, required: true },
     inStock: { type: Boolean, required: true },
 
-}, { _id: false }))
+}, { _id: false })
 
 const productSchema = new Schema<Product>({
     name: { type: String, required: true },
