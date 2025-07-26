@@ -1,34 +1,37 @@
+import jsPlugin from '@eslint/js';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import prettierPlugin from 'eslint-plugin-prettier';
 import globals from 'globals';
-import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default [
   {
-    files: ['**/*.{js,mjs,cjs,ts}'],
-  },
-  {
-    files: ['**/*.js'],
+    files: ['**/*.{js,ts}'],
+
+    ignores: ['node_modules/**', 'dist/**'],
+
     languageOptions: {
-      sourceType: 'commonjs',
+      parser: tsParser,
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
     },
-  },
-  {
-    ignores: ['node_modules/*'],
-  },
-  {
-    languageOptions: {
-      globals: globals.browser,
+
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+      prettier: prettierPlugin,
     },
-  },
-  {
+
     rules: {
+      ...jsPlugin.configs.recommended.rules,
+      ...tsPlugin.configs.recommended.rules,
+      'prettier/prettier': 'error',
+
       eqeqeq: 'off',
-      'no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-vars': ['error'],
       'prefer-const': ['error', { ignoreReadBeforeAssign: true }],
     },
   },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  eslintPluginPrettierRecommended,
 ];
