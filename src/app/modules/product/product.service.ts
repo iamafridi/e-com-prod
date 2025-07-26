@@ -7,8 +7,19 @@ const createProductIntoDB = async (product: Product) => {
     const result = await ProductModel.create(product)
     return result
 }
+// Getting all the products 
+const getAllProductsFromDB = async () => {
+    const result = await ProductModel.find();
+    return result;
+}
+
+// Getting only one product
+const getASingleProductFromDB = async (name: string) => {
+    const result = await ProductModel.findOne({ name: name })
+    return result;
+}
 
 // jate amra ekta controller tekhe call dite pari tai eta ekhan tekhe export korbo 
 export const ProductServices = {
-    createProductIntoDB,
+    createProductIntoDB, getAllProductsFromDB, getASingleProductFromDB
 }
