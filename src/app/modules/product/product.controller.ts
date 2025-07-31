@@ -4,11 +4,15 @@ import ProductValidationSchema from './product.validation';
 
 const createProduct = async (req: Request, res: Response) => {
   try {
-    const { product: productData } = req.body; //ekhane name allias use korsi
-    //will call service function to send this data
-    const { error } = ProductValidationSchema.validate(productData);
+    const { product: productData } = req.body; // ekhane name allias use korsi
+
+    // will call service function to send this data
+
+    // Data validating with joy
+    const { error, value } = ProductValidationSchema.validate(productData);
     // console.log({ error }, { value });
-    const result = await ProductServices.createProductIntoDB(productData);
+
+    const result = await ProductServices.createProductIntoDB(value);
 
     if (error) {
       res.status(500).json({
@@ -29,6 +33,7 @@ const createProduct = async (req: Request, res: Response) => {
       message: 'Product is created Successfully',
       data: result,
     });
+
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -49,6 +54,7 @@ const getAllProducts = async (req: Request, res: Response) => {
       message: 'Product is Retrieved  Successfully',
       data: result,
     });
+
   } catch (err) {
     console.log(err);
   }
@@ -66,6 +72,7 @@ const getASingleProduct = async (req: Request, res: Response) => {
       message: 'Your Product Retrieved Successfully ',
       data: result,
     });
+
   } catch (err) {
     console.log(err);
   }
