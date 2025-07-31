@@ -1,11 +1,27 @@
 import { Request, Response } from 'express';
 import { ProductServices } from './product.service';
+import ProductValidationSchema from './product.validation';
 
 const createProduct = async (req: Request, res: Response) => {
   try {
     const { product: productData } = req.body; //ekhane name allias use korsi
     //will call service function to send this data
+    const { error } = ProductValidationSchema.validate(productData);
+    // console.log({ error }, { value });
     const result = await ProductServices.createProductIntoDB(productData);
+
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong !',
+        error: error.details, // error: error, jehetu amra es6 use kortesi sehetu eta use na korleo chole amader
+      });
+    }
+
+    /**
+     ekhane req.body amader product data receive korbe and eta amra joi diye validate korbo.
+     Here req.body receives our product data and we will validate it using joi. 
+     */
 
     // Send Response
     res.status(200).json({
@@ -18,45 +34,46 @@ const createProduct = async (req: Request, res: Response) => {
       success: false,
       message: 'Something went wrong !',
       error: err,
-    }
+    });
+  }
 };
 
-  // Getting all the products
-  const getAllProducts = async (req: Request, res: Response) => {
-    try {
-      const result = await ProductServices.getAllProductsFromDB();
+// Getting all the products
+const getAllProducts = async (req: Request, res: Response) => {
+  try {
+    const result = await ProductServices.getAllProductsFromDB();
 
-      // Send Response
-      res.status(200).json({
-        success: true,
-        message: 'Product is Retrieved  Successfully',
-        data: result,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    // Send Response
+    res.status(200).json({
+      success: true,
+      message: 'Product is Retrieved  Successfully',
+      data: result,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-  // getting only one Product by name
-  const getASingleProduct = async (req: Request, res: Response) => {
-    try {
-      const { productName } = req.params;
-      const result = await ProductServices.getASingleProductFromDB(productName);
+// getting only one Product by name
+const getASingleProduct = async (req: Request, res: Response) => {
+  try {
+    const { productName } = req.params;
+    const result = await ProductServices.getASingleProductFromDB(productName);
 
-      // sending Response
-      res.status(200).json({
-        success: true,
-        message: 'Your Product Retrieved Successfully ',
-        data: result,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    // sending Response
+    res.status(200).json({
+      success: true,
+      message: 'Your Product Retrieved Successfully ',
+      data: result,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-  // So that amra Route e use korte pari
-  export const ProductControllers = {
-    createProduct,
-    getAllProducts,
-    getASingleProduct,
-  };
+// So that amra Route e use korte pari
+export const ProductControllers = {
+  createProduct,
+  getAllProducts,
+  getASingleProduct,
+};

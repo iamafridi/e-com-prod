@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+// import validator from 'validator';
 import { Inventory, Product, Variant } from './product/product.interface';
 
 // Creating schema
@@ -13,10 +14,12 @@ const VariantSchema = new Schema<Variant>(
       type: String,
       required: [true, 'Variant value is required.'],
       trim: true,
+      minlength: 1,
     },
   },
   { _id: false },
 );
+
 //jate etar jonno alada mongodb te id create na hoy
 
 const inventorySchema = new Schema<Inventory>(
@@ -24,6 +27,7 @@ const inventorySchema = new Schema<Inventory>(
     quantity: {
       type: Number,
       required: true,
+      min: [0, 'Quantity cannot be negative'],
     },
     inStock: {
       type: Boolean,
@@ -38,16 +42,28 @@ const productSchema = new Schema<Product>({
     type: String,
     required: [true, 'Product name is required.'],
     trim: true,
-    validate: {
-      validator: function (value: string) {
-        const nameStr = value.charAt(0).toUpperCase() + value.slice(1);
-        return nameStr === value;
-      },
-      message: '{VALUE} is not in capitalize format',
-    },
+    minlength: [2, 'Product name is too short'],
+    unique: true,
+    /*
+    Not using validator here because I am using phone model and other electronic device name as name so it contains small letter as the first letter such as iPhone and numbers in name so commented it 
+    */
+
+    // validate: {
+    //   validator: function (value: string) {
+    //     return /^[A-Z]/.test(value); // Just check first char is capital
+    //   },
+    //   message: '{VALUE} must start with a capital letter',
+    // },
   },
-  description: { type: String },
-  price: { type: Number, required: [true, 'Product price is required.'] },
+  description: {
+    type: String,
+    trim: true,
+  },
+  price: {
+    type: Number,
+    required: [true, 'Product price is required.'],
+    min: [0, 'Price must be a positive number'],
+  },
   category: {
     type: String,
     required: [true, 'Product category is required.'],
