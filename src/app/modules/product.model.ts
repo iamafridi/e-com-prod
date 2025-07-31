@@ -20,8 +20,7 @@ const VariantSchema = new Schema<Variant>(
   { _id: false },
 );
 
-//jate etar jonno alada mongodb te id create na hoy
-
+// jate etar jonno alada mongodb te id create na hoy
 const inventorySchema = new Schema<Inventory>(
   {
     quantity: {

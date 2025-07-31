@@ -1,26 +1,36 @@
 import { Request, Response } from 'express';
 import { ProductServices } from './product.service';
+// import ProductValidationSchema from './product.validation';
+import { z } from 'zod';
 import ProductValidationSchema from './product.validation';
 
 const createProduct = async (req: Request, res: Response) => {
   try {
+
     const { product: productData } = req.body; // ekhane name allias use korsi
 
-    // will call service function to send this data
+    /* Custom Validation Using zod*/
+    const zodParseData = ProductValidationSchema.parse(productData);
 
-    // Data validating with joy
-    const { error, value } = ProductValidationSchema.validate(productData);
-    // console.log({ error }, { value });
 
-    const result = await ProductServices.createProductIntoDB(value);
+    /* //JOI VALIDATION will call service function to send this data
+ 
+     // Data validating with joy
+     // const { error, value } = ProductValidationSchema.validate(productData);
+     // console.log({ error }, { value });
+ */
 
-    if (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Something went wrong !',
-        error: error.details, // error: error, jehetu amra es6 use kortesi sehetu eta use na korleo chole amader
-      });
-    }
+
+
+    const result = await ProductServices.createProductIntoDB(zodParseData);
+
+    // if (error) {
+    //   res.status(500).json({
+    //     success: false,
+    //     message: 'Something went wrong !',
+    //     error: error.details, // error: error, jehetu amra es6 use kortesi sehetu eta use na korleo chole amader
+    //   });
+    // }
 
     /**
      ekhane req.body amader product data receive korbe and eta amra joi diye validate korbo.
