@@ -3,20 +3,14 @@ import { TProduct } from './product.interface';
 
 const createProductIntoDB = async (productData: TProduct) => {
   if (await Product.isUserExists(productData.id)) {
-    throw new Error('Product Already Exists!')
+    throw new Error('Product Already Exists!');
   } // Coz we already did indexing In mongodb that's why
 
   // What happend is that :  amader query cholbe model er upore and product amader ekta body return korbe jeta amra rakhtesi ekta variable e and jeta return kortesi oi variable diye . Lastly Return korle se chole jabe controller er kache
 
-
   const result = await Product.create(productData); //Mongoose Built in Static Method
 
-
-
-
-
-
-  // const product = new Product(productData); //Creating an Instance 
+  // const product = new Product(productData); //Creating an Instance
 
   // if (await product.isUserExists(productData.id)) {
   //   throw new Error('Product Already Exists!')
@@ -37,9 +31,23 @@ const getASingleProductFromDB = async (name: string) => {
   return result;
 };
 
+// Getting one by id
+const getSingleProductByIdFromDB = async (id: string) => {
+  // const result = await Product.findOne({ id });
+  const result = await Product.aggregate([{ $match: { id: id } }]); // aggregate pipeline implementation, jekhane amra id r sathe match kortesi 
+  return result;
+};
+// Delete one by id
+const deleteSingleProductFromDB = async (id: string) => {
+  const result = await Product.updateOne({ id }, { isDeleted: true }); //real lide application a kintu amara ebhabe delete korbo na amra update korbo
+  return result;
+};
+
 // jate amra ekta controller tekhe call dite pari tai eta ekhan tekhe export korbo
 export const ProductServices = {
   createProductIntoDB,
   getAllProductsFromDB,
   getASingleProductFromDB,
+  getSingleProductByIdFromDB,
+  deleteSingleProductFromDB,
 };

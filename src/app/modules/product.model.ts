@@ -48,7 +48,6 @@ const productSchema = new Schema<TProduct, ProductModel>({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    unique: true,
     maxlength: [20, 'Password Can not be more that 20 characters'],
   },
   name: {
@@ -91,13 +90,17 @@ const productSchema = new Schema<TProduct, ProductModel>({
     type: inventorySchema,
     required: [true, 'Product inventory information is required.'],
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 // Pre save Middleware /Hook : will work on create() and save ()
 productSchema.pre('save', async function (next) {
   // console.log(this, 'Pre Hook : We will save the data');
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
+  const user = this; //this amader current document ke reffer kortese 
   //Hashing Password
   user.password = await bcrypt.hash(
     user.password,
@@ -107,9 +110,31 @@ productSchema.pre('save', async function (next) {
 });
 
 // Post Save Middleware /hook
-productSchema.post('save', function () {
-  console.log(this, 'Post Hook : We Have saved your data');
+productSchema.post('save', function (doc, next) {
+  doc.password = '';
+  // console.log(this, 'Post Hook : We Have saved your data');
+  next();
 });
+
+
+//  Query Middleware
+productSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } }); // Delete howa chara jey document gula ase oigula
+  next();
+});
+
+// for single data 
+productSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } }); // Delete howa chara jey document gula ase oigula
+  next();
+});
+
+// For aggregation too.
+productSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } })
+  next();
+});
+
 
 // Creating Custom Static Method
 productSchema.statics.isUserExists = async function (id: string) {

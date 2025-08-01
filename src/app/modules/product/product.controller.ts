@@ -4,23 +4,21 @@ import { ProductServices } from './product.service';
 import { z } from 'zod';
 import ProductValidationSchema from './product.validation';
 
+
+// Create a product
 const createProduct = async (req: Request, res: Response) => {
   try {
-
     const { product: productData } = req.body; // ekhane name allias use korsi
 
     /* Custom Validation Using zod*/
     const zodParseData = ProductValidationSchema.parse(productData);
-
 
     /* //JOI VALIDATION will call service function to send this data
  
      // Data validating with joy
      // const { error, value } = ProductValidationSchema.validate(productData);
      // console.log({ error }, { value });
- */
-
-
+    */
 
     const result = await ProductServices.createProductIntoDB(zodParseData);
 
@@ -53,6 +51,7 @@ const createProduct = async (req: Request, res: Response) => {
   }
 };
 
+
 // Getting all the products
 const getAllProducts = async (req: Request, res: Response) => {
   try {
@@ -65,10 +64,15 @@ const getAllProducts = async (req: Request, res: Response) => {
       data: result,
     });
 
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong !',
+      error: err,
+    });
   }
 };
+
 
 // getting only one Product by name
 const getASingleProduct = async (req: Request, res: Response) => {
@@ -83,14 +87,60 @@ const getASingleProduct = async (req: Request, res: Response) => {
       data: result,
     });
 
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong !',
+      error: err,
+    });
   }
 };
+
+
+// get single product by ID
+const getSingleProductByIdFromDB = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const result = await ProductServices.getSingleProductByIdFromDB(productId);
+    res.status(200).json({
+      success: true,
+      message: 'Your Product Retrieved Successfully ',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong !',
+      error: err,
+    });
+  }
+};
+
+// Delete a single product by ID 
+const deleteSingleProductFromDB = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const result = await ProductServices.deleteSingleProductFromDB(productId);
+    res.status(200).json({
+      success: true,
+      message: 'Your Product Deleted Successfully ',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong !',
+      error: err,
+    });
+  }
+};
+
 
 // So that amra Route e use korte pari
 export const ProductControllers = {
   createProduct,
   getAllProducts,
   getASingleProduct,
+  getSingleProductByIdFromDB,
+  deleteSingleProductFromDB,
 };
