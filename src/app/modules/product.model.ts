@@ -93,8 +93,39 @@ const productSchema = new Schema<TProduct, ProductModel>({
   isDeleted: {
     type: Boolean,
     default: false,
+  },
+}, {
+  toJSON: {
+    virtuals: true,
   }
 });
+
+// Mongoose Virtual
+productSchema.virtual('Device').get(function () {
+  if (!this.variants || !Array.isArray(this.variants)) return this.name;
+
+  const variantList = this.variants
+    .map(
+      (variant: { type: string; value: string }) =>
+        `${variant.type}: ${variant.value}`,
+    )
+    .join(', ');
+
+  return `${this.name} [${variantList}]`;
+});
+
+//virtuals in JSON and object outputs, toJSON use korsi tai eta dorkar nai
+// productSchema.set('toJSON', { virtuals: true });
+// productSchema.set('toObject', { virtuals: true });
+
+
+// productSchema.virtual('Device').get(function(){
+//   return this.name + this.variants. +
+// })
+
+
+
+
 
 // Pre save Middleware /Hook : will work on create() and save ()
 productSchema.pre('save', async function (next) {

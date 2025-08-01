@@ -46,7 +46,7 @@ const ProductValidationSchema = z.object({
         .min(1, { message: 'At least one product variant is required.' }),
 
     inventory: InventoryValidationSchema,
-    isDeleted: z.boolean(),
+    isDeleted: z.boolean().default(false),
 });
 
 export default ProductValidationSchema;
