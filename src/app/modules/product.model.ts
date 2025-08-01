@@ -131,7 +131,7 @@ productSchema.pre('findOne', function (next) {
 
 // For aggregation too.
 productSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } })
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 
