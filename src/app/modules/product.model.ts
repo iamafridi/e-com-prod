@@ -6,6 +6,8 @@ import {
   TProduct,
   TVariant,
 } from './product/product.interface';
+import bcrypt from 'bcrypt';
+import config from '../config';
 
 // Creating schema
 const VariantSchema = new Schema<TVariant>(
@@ -43,6 +45,12 @@ const inventorySchema = new Schema<TInventory>(
 
 const productSchema = new Schema<TProduct, ProductModel>({
   id: { type: String, required: [true, 'ID is required'], unique: true },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    unique: true,
+    maxlength: [20, 'Password Can not be more that 20 characters'],
+  },
   name: {
     type: String,
     required: [true, 'Product name is required.'],
@@ -85,14 +93,29 @@ const productSchema = new Schema<TProduct, ProductModel>({
   },
 });
 
+// Pre save Middleware /Hook : will work on create() and save ()
+productSchema.pre('save', async function (next) {
+  // console.log(this, 'Pre Hook : We will save the data');
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  //Hashing Password
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+// Post Save Middleware /hook
+productSchema.post('save', function () {
+  console.log(this, 'Post Hook : We Have saved your data');
+});
+
 // Creating Custom Static Method
 productSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Product.findOne({ id });
   return existingUser;
-
-}
-
-
+};
 
 // Custom Instance Method
 // productSchema.methods.isUserExists = async function (id: string) {
