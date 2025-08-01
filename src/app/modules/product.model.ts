@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
 // import validator from 'validator';
-import { Inventory, Product, Variant } from './product/product.interface';
+import { ProductMethods, ProductModel, TInventory, TProduct, TVariant, } from './product/product.interface';
 
 // Creating schema
-const VariantSchema = new Schema<Variant>(
+const VariantSchema = new Schema<TVariant>(
   {
     type: {
       type: String,
@@ -21,7 +21,7 @@ const VariantSchema = new Schema<Variant>(
 );
 
 // jate etar jonno alada mongodb te id create na hoy
-const inventorySchema = new Schema<Inventory>(
+const inventorySchema = new Schema<TInventory>(
   {
     quantity: {
       type: Number,
@@ -36,7 +36,8 @@ const inventorySchema = new Schema<Inventory>(
   { _id: false },
 );
 
-const productSchema = new Schema<Product>({
+const productSchema = new Schema<TProduct, ProductModel, ProductMethods>({
+  id: { type: String, required: [true, 'ID is required'], unique: true },
   name: {
     type: String,
     required: [true, 'Product name is required.'],
@@ -79,5 +80,11 @@ const productSchema = new Schema<Product>({
   },
 });
 
+
+productSchema.methods.isUserExists = async function (id: string) {
+  const existingUser = await Product.findOne({ id }); // as we are using es6
+  return existingUser;
+};
+
 // Creating Model
-export const ProductModel = model<Product>('Product', productSchema);
+export const Product = model<TProduct, ProductModel>('Product', productSchema);

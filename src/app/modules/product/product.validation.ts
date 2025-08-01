@@ -22,6 +22,7 @@ const InventoryValidationSchema = z.object({
 // Product schema
 // ----------------------
 const ProductValidationSchema = z.object({
+    id: z.union([z.string(), z.number()]),
     name: z.string().trim().min(2, { message: 'Product name is too short' }),
     // Not validating capital letter or digits intentionally
     // since product names like iPhone are valid.

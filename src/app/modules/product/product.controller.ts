@@ -44,10 +44,10 @@ const createProduct = async (req: Request, res: Response) => {
       data: result,
     });
 
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({
       success: false,
-      message: 'Something went wrong !',
+      message: err.message || 'Something went wrong !',
       error: err,
     });
   }
