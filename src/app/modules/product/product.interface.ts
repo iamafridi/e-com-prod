@@ -21,12 +21,22 @@ export type TProduct = {
   inventory: TInventory;
 };
 
-export type ProductMethods = {
-  isUserExists(id: string): Promise<TProduct | null>;
-};
+// For Creating Static Method 
+export interface ProductModel extends Model<TProduct> {
+  isUserExists(id: string): Promise<TProduct | null>
+}
 
-export type ProductModel = Model<
-  TProduct,
-  Record<string, never>,
-  ProductMethods
->;
+
+
+// For Creating Instance Method 
+// export type ProductMethods = {
+//   isUserExists(id: string): Promise<TProduct | null>;
+// };
+
+
+
+// export type ProductModel = Model<
+//   TProduct,
+//   Record<string, never>,
+//   ProductMethods
+// >;

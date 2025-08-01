@@ -1,6 +1,11 @@
 import { Schema, model } from 'mongoose';
 // import validator from 'validator';
-import { ProductMethods, ProductModel, TInventory, TProduct, TVariant, } from './product/product.interface';
+import {
+  ProductModel,
+  TInventory,
+  TProduct,
+  TVariant,
+} from './product/product.interface';
 
 // Creating schema
 const VariantSchema = new Schema<TVariant>(
@@ -36,7 +41,7 @@ const inventorySchema = new Schema<TInventory>(
   { _id: false },
 );
 
-const productSchema = new Schema<TProduct, ProductModel, ProductMethods>({
+const productSchema = new Schema<TProduct, ProductModel>({
   id: { type: String, required: [true, 'ID is required'], unique: true },
   name: {
     type: String,
@@ -80,11 +85,20 @@ const productSchema = new Schema<TProduct, ProductModel, ProductMethods>({
   },
 });
 
-
-productSchema.methods.isUserExists = async function (id: string) {
-  const existingUser = await Product.findOne({ id }); // as we are using es6
+// Creating Custom Static Method
+productSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Product.findOne({ id });
   return existingUser;
-};
+
+}
+
+
+
+// Custom Instance Method
+// productSchema.methods.isUserExists = async function (id: string) {
+//   const existingUser = await Product.findOne({ id }); // as we are using es6
+//   return existingUser;
+// };
 
 // Creating Model
 export const Product = model<TProduct, ProductModel>('Product', productSchema);
