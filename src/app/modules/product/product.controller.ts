@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import { ProductServices } from './product.service';
 // import ProductValidationSchema from './product.validation';
-import { z } from 'zod';
+// import { z } from 'zod';
 import ProductValidationSchema from './product.validation';
-
 
 // Create a product
 const createProduct = async (req: Request, res: Response) => {
@@ -41,16 +40,15 @@ const createProduct = async (req: Request, res: Response) => {
       message: 'Product is created Successfully',
       data: result,
     });
-
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong !',
-      error: err,
-    });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ success: false, message: err.message });
+    } else {
+      res.status(500).json({ success: false, message: 'Something went wrong!' });
+    }
   }
-};
 
+};
 
 // Getting all the products
 const getAllProducts = async (req: Request, res: Response) => {
@@ -63,16 +61,15 @@ const getAllProducts = async (req: Request, res: Response) => {
       message: 'Product is Retrieved  Successfully',
       data: result,
     });
-
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong !',
-      error: err,
-    });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ success: false, message: err.message });
+    } else {
+      res.status(500).json({ success: false, message: 'Something went wrong!' });
+    }
   }
-};
 
+};
 
 // getting only one Product by name
 const getASingleProduct = async (req: Request, res: Response) => {
@@ -86,16 +83,15 @@ const getASingleProduct = async (req: Request, res: Response) => {
       message: 'Your Product Retrieved Successfully ',
       data: result,
     });
-
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong !',
-      error: err,
-    });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ success: false, message: err.message });
+    } else {
+      res.status(500).json({ success: false, message: 'Something went wrong!' });
+    }
   }
-};
 
+};
 
 // get single product by ID
 const getSingleProductByIdFromDB = async (req: Request, res: Response) => {
@@ -107,16 +103,17 @@ const getSingleProductByIdFromDB = async (req: Request, res: Response) => {
       message: 'Your Product Retrieved Successfully ',
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong !',
-      error: err,
-    });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ success: false, message: err.message });
+    } else {
+      res.status(500).json({ success: false, message: 'Something went wrong!' });
+    }
   }
+
 };
 
-// Delete a single product by ID 
+// Delete a single product by ID
 const deleteSingleProductFromDB = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
@@ -126,15 +123,17 @@ const deleteSingleProductFromDB = async (req: Request, res: Response) => {
       message: 'Your Product Deleted Successfully ',
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong !',
-      error: err,
-    });
   }
-};
+  // 
+  catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ success: false, message: err.message });
+    } else {
+      res.status(500).json({ success: false, message: 'Something went wrong!' });
+    }
+  }
 
+};
 
 // So that amra Route e use korte pari
 export const ProductControllers = {

@@ -34,7 +34,7 @@ const getASingleProductFromDB = async (name: string) => {
 // Getting one by id
 const getSingleProductByIdFromDB = async (id: string) => {
   // const result = await Product.findOne({ id });
-  const result = await Product.aggregate([{ $match: { id: id } }]); // aggregate pipeline implementation, jekhane amra id r sathe match kortesi 
+  const result = await Product.aggregate([{ $match: { id: id } }]); // aggregate pipeline implementation, jekhane amra id r sathe match kortesi
   return result;
 };
 // Delete one by id

@@ -8,7 +8,7 @@ router.post('/create-product', ProductControllers.createProduct);
 // getting all the students
 router.get('/', ProductControllers.getAllProducts);
 
-// get a single data by id 
+// get a single data by id
 router.get('/:productId', ProductControllers.getASingleProduct);
 
 // delete

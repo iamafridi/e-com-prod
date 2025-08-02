@@ -23,19 +23,15 @@ export type TProduct = {
   isDeleted: boolean;
 };
 
-// For Creating Static Method 
+// For Creating Static Method
 export interface ProductModel extends Model<TProduct> {
-  isUserExists(id: string): Promise<TProduct | null>
+  isUserExists(id: string): Promise<TProduct | null>;
 }
 
-
-
-// For Creating Instance Method 
+// For Creating Instance Method
 // export type ProductMethods = {
 //   isUserExists(id: string): Promise<TProduct | null>;
 // };
-
-
 
 // export type ProductModel = Model<
 //   TProduct,

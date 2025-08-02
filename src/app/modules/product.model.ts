@@ -43,62 +43,65 @@ const inventorySchema = new Schema<TInventory>(
   { _id: false },
 );
 
-const productSchema = new Schema<TProduct, ProductModel>({
-  id: { type: String, required: [true, 'ID is required'], unique: true },
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-    maxlength: [20, 'Password Can not be more that 20 characters'],
-  },
-  name: {
-    type: String,
-    required: [true, 'Product name is required.'],
-    trim: true,
-    minlength: [2, 'Product name is too short'],
-    unique: true,
-    /*
+const productSchema = new Schema<TProduct, ProductModel>(
+  {
+    id: { type: String, required: [true, 'ID is required'], unique: true },
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      maxlength: [20, 'Password Can not be more that 20 characters'],
+    },
+    name: {
+      type: String,
+      required: [true, 'Product name is required.'],
+      trim: true,
+      minlength: [2, 'Product name is too short'],
+      unique: true,
+      /*
     Not using validator here because I am using phone model and other electronic device name as name so it contains small letter as the first letter such as iPhone and numbers in name so commented it 
     */
 
-    // validate: {
-    //   validator: function (value: string) {
-    //     return /^[A-Z]/.test(value); // Just check first char is capital
-    //   },
-    //   message: '{VALUE} must start with a capital letter',
-    // },
+      // validate: {
+      //   validator: function (value: string) {
+      //     return /^[A-Z]/.test(value); // Just check first char is capital
+      //   },
+      //   message: '{VALUE} must start with a capital letter',
+      // },
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: [true, 'Product price is required.'],
+      min: [0, 'Price must be a positive number'],
+    },
+    category: {
+      type: String,
+      required: [true, 'Product category is required.'],
+      trim: true,
+    },
+    tags: { type: [String], default: [] },
+    variants: {
+      type: [VariantSchema],
+      required: [true, 'At least one product variant is required.'],
+    },
+    inventory: {
+      type: inventorySchema,
+      required: [true, 'Product inventory information is required.'],
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  description: {
-    type: String,
-    trim: true,
+  {
+    toJSON: {
+      virtuals: true,
+    },
   },
-  price: {
-    type: Number,
-    required: [true, 'Product price is required.'],
-    min: [0, 'Price must be a positive number'],
-  },
-  category: {
-    type: String,
-    required: [true, 'Product category is required.'],
-    trim: true,
-  },
-  tags: { type: [String], default: [] },
-  variants: {
-    type: [VariantSchema],
-    required: [true, 'At least one product variant is required.'],
-  },
-  inventory: {
-    type: inventorySchema,
-    required: [true, 'Product inventory information is required.'],
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-}, {
-  toJSON: {
-    virtuals: true,
-  }
-});
+);
 
 // Mongoose Virtual
 productSchema.virtual('Device').get(function () {
@@ -118,20 +121,15 @@ productSchema.virtual('Device').get(function () {
 // productSchema.set('toJSON', { virtuals: true });
 // productSchema.set('toObject', { virtuals: true });
 
-
 // productSchema.virtual('Device').get(function(){
 //   return this.name + this.variants. +
 // })
-
-
-
-
 
 // Pre save Middleware /Hook : will work on create() and save ()
 productSchema.pre('save', async function (next) {
   // console.log(this, 'Pre Hook : We will save the data');
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; //this amader current document ke reffer kortese 
+  const user = this; //this amader current document ke reffer kortese
   //Hashing Password
   user.password = await bcrypt.hash(
     user.password,
@@ -147,14 +145,13 @@ productSchema.post('save', function (doc, next) {
   next();
 });
 
-
 //  Query Middleware
 productSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } }); // Delete howa chara jey document gula ase oigula
   next();
 });
 
-// for single data 
+// for single data
 productSchema.pre('findOne', function (next) {
   this.find({ isDeleted: { $ne: true } }); // Delete howa chara jey document gula ase oigula
   next();
@@ -165,7 +162,6 @@ productSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
-
 
 // Creating Custom Static Method
 productSchema.statics.isUserExists = async function (id: string) {
